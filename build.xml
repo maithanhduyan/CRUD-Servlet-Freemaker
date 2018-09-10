@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- =================================ANT BUILDER========================== 
+     project     : CRUD-Servlet-Freemaker
+     description : java 8, Servlet-api, Freemaker Template Engine.
+     Author		 : Mai Thành Duy An                                                               
+     Sep 10, 2018 5:52:54 PM                                                        
+     ====================================================================== -->
+
+<project basedir="." name="CRUD-Servlet-Freemaker" default="all">
+	<property name="author" value="AnMTD" />
+	<property name="java8" value="1.8" />
+
+	<!-- PROJECT PROPERTIES -->
+	<property name="project.name" value="${ant.project.name}" />
+	<property name="web.dir" value="WebContent" />
+	<property name="src.dir" value="src" />
+	<property name="build.dir" value="build" />
+	<property name="classes.dir" value="${build.dir}/classes" />
+	<property name="dist.dir" value="${build.dir}/dist" />
+	<property name="war.dir" value="${build.dir}/war" />
+	<property name="war.file" value="${project.name}.war" />
+	<property name="jar.file" value="${project.name}.jar" />
+
+	<!-- TOMCAT PROPERTIES-->
+	<property name="tomcat.manager.url" value="http://localhost:8080/manager/" />
+	<property name="tomcat.manager.username" value="tomcat" />
+	<property name="tomcat.manager.password" value="s3cret" />
+	<property name="tomcat.webapps" value="D:\SPLUS\DPG\SourceCode\Java\apache-tomcat-8.0.53\webapps" />
+
+	<!-- Timestamp-->
+	<tstamp prefix="build-info">
+		<format property="current-date" pattern="E dd-MMMM-yyyy" locale="en" />
+		<format property="current-time" pattern="hh:mm:ss SSS a z" locale="en" />
+		<format property="year-month-day" pattern="yyyy-MM-dd" locale="en" />
+	</tstamp>
+
+	<!--CLASS PATH -->
+	<path id="master-classpath">
+		<fileset dir="WebContent/WEB-INF/lib">
+			<include name="*.jar" />
+		</fileset>
+
+		<pathelement path="${classes.dir}" />
+	</path>
+
+	<!-- ANT TASK -->
+	<target name="init">
+		<mkdir dir="${dist.dir}" />
+		<mkdir dir="${war.dir}" />
+		<mkdir dir="${classes.dir}" />
+		<mkdir dir="${war.dir}/WEB-INF/classes" />
+	</target>
+
+	<target name="clean">
+		<delete dir="${dist.dir}" />
+		<delete dir="${war.dir}" />
+		<delete dir="${classes.dir}" />
+		<antcall target="init" />
+	</target>
+
+	<target name="all" depends="clean,deploy" description="Compile main source tree java files" />
+
+	<target name="build" depends="" description="Build project">
+		<copy todir="${classes.dir}">
+			<fileset dir="${src.dir}" includes="**/*.xml" />
+		</copy>
+		<javac destdir="${classes.dir}" source="${java8}" target="${java8}" debug="true" deprecation="false" optimize="false" failonerror="true" includeantruntime="false">
+			<src path="${src.dir}" />
+			<classpath refid="master-classpath" />
+		</javac>
+	</target>
+
+	<target name="war" depends="build" description="Create war file">
+		<copy todir="${war.dir}/WEB-INF/classes">
+			<fileset dir="${classes.dir}" includes="**/*.class" />
+			<fileset dir="${classes.dir}" includes="**/*.xml" />
+		</copy>
+
+		<copy todir="${war.dir}/WEB-INF">
+			<fileset dir="${web.dir}" includes="WebContent/WEB-INF/web.xml" />
+		</copy>
+
+		<copy todir="${war.dir}">
+			<fileset dir="${web.dir}" includes="**/*.*" />
+		</copy>
+
+		<echo message="Creating war file...." />
+		<jar jarfile="${dist.dir}/${war.file}" basedir="${war.dir}" />
+	</target>
+
+	<target name="jar" depends="build" description="Create jar file">
+		<echo message="Creating jar file...." />
+		<jar jarfile="${dist.dir}/${jar.file}" basedir="${classes.dir}" />
+	</target>
+
+	<target name="deploy" depends="war" description="Deploy application as a WAR file">
+		<copy todir="${tomcat.webapps}">
+			<fileset dir="${dist.dir}" />
+		</copy>
+	</target>
+
+</project>
+
