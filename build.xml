@@ -25,7 +25,9 @@
 	<property name="tomcat.manager.url" value="http://localhost:8080/manager/" />
 	<property name="tomcat.manager.username" value="tomcat" />
 	<property name="tomcat.manager.password" value="s3cret" />
-	<property name="tomcat.webapps" value="D:\SPLUS\DPG\SourceCode\Java\apache-tomcat-8.0.53\webapps" />
+	<property name="tomcat.home" value="D:\SPLUS\DPG\SourceCode\Java\apache-tomcat-8.0.53" />
+	<property name="tomcat.webapps" value="${tomcat.home}/webapps" />
+	<property name="tomcat.lib" value="${tomcat.home}/lib" />
 
 	<!-- Timestamp-->
 	<tstamp prefix="build-info">
@@ -37,6 +39,9 @@
 	<!--CLASS PATH -->
 	<path id="master-classpath">
 		<fileset dir="WebContent/WEB-INF/lib">
+			<include name="*.jar" />
+		</fileset>
+		<fileset dir="${tomcat.lib}">
 			<include name="*.jar" />
 		</fileset>
 
